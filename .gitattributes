@@ -1,2 +1,16 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+ 
+assignment09
+1 Assignment09: mnist(classify 0)
+Name: LEE eun kyu
+Student ID: 20166361
+Github: https://github.com/alpharevol/Machine-Learning
+1.1 Import libarary (linalg for inverse matrix, pseudo inverse)
+In [1]: import numpy as np
+import numpy.linalg as lin
+import matplotlib.pyplot as plt
+import time
+1.2 Same as example code
+In [2]: file_data_train = "mnist_train.csv"
+file_data_test = "mnist_test.csv"
