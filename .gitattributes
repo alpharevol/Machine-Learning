@@ -14,3 +14,16 @@ import time
 1.2 Same as example code
 In [2]: file_data_train = "mnist_train.csv"
 file_data_test = "mnist_test.csv"
+h_data_train = open(file_data_train, "r")
+h_data_test = open(file_data_test, "r")
+data_train = h_data_train.readlines()
+data_test = h_data_test.readlines()
+h_data_train.close()
+h_data_test.close()
+size_row = 28 # height of the image
+size_col = 28 # width of the image
+num_train = len(data_train) # number of training images
+num_test = len(data_test) # number of testing images
+#
+# normalize the values of the input data to be [0, 1]
+1
