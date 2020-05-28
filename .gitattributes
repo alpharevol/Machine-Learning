@@ -27,3 +27,39 @@ num_test = len(data_test) # number of testing images
 #
 # normalize the values of the input data to be [0, 1]
 1
+#
+def normalize(data):
+data_normalized = (data - min(data)) / (max(data) - min(data))
+return (data_normalized)
+#
+# example of distance function between two vectors x and y
+#
+def distance(x, y):
+d = (x - y) ** 2
+s = np.sum(d)
+# r = np.sqrt(s)
+return (s)
+#
+# make a matrix each column of which represents an images in a vector form
+#
+list_image_train = np.empty((size_row * size_col, num_train), dtype=float)
+list_label_train = np.empty(num_train, dtype=int)
+list_image_test = np.empty((size_row * size_col, num_test), dtype=float)
+list_label_test = np.empty(num_test, dtype=int)
+count = 0
+for line in data_train:
+line_data = line.split(',')
+label = line_data[0]
+im_vector = np.asfarray(line_data[1:])
+im_vector = normalize(im_vector)
+list_label_train[count] = label
+list_image_train[:, count] = im_vector
+# limst_image_train column train i
+count += 1
+count = 0
+for line in data_test:
+line_data = line.split(',')
+label = line_data[0]
+im_vector = np.asfarray(line_data[1:])
+im_vector = normalize(im_vector)
+2
