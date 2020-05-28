@@ -27,6 +27,10 @@ num_test = len(data_test) # number of testing images
 #
 # normalize the values of the input data to be [0, 1]
 1
+
+
+
+ 
 #
 def normalize(data):
 data_normalized = (data - min(data)) / (max(data) - min(data))
@@ -63,3 +67,141 @@ label = line_data[0]
 im_vector = np.asfarray(line_data[1:])
 im_vector = normalize(im_vector)
 2
+
+
+
+ 
+list_label_test[count] = label
+list_image_test[:, count] = im_vector
+count += 1
+1.3 make a feature which get random vector likes normal distribution
+In [3]: def feature(parameter_num):
+# random-vector
+feature_func = np.empty((parameter_num, size_row*size_col))
+for i in range(parameter_num):
+feature_func[i, :] = np.random.normal(size=size_row*size_col)
+return feature_func
+1.4 deﬁne the sign function
+In [4]: def hat(result):
+if result >= 0:
+return 1
+# sign function
+else:
+return -1
+˜
+ˆ
+1.5 get the train result (In this case suppose the train result of f is same as f. So the
+value will be 1 if the lable of image is ‘Zero’, otherwise will be -1)
+In [5]: def train_result():
+origin_result = np.empty((num_train, 1))
+for i in range(num_train):
+if list_label_train[i] == 0:
+origin_result[i] = 1
+else:
+origin_result[i] = -1
+return origin_result
+1.6 make a model for image set data using random vector
+In [6]: def model_func(feature_func, parameter_num, image_num, image):
+model = np.empty((image_num, parameter_num), dtype=float)
+for i in range(image_num):
+model[i, :] = np.dot(feature_func, image[:, i])
+return model
+1.7 get the parameter by pesudo inverse
+In [7]: def parameter_func(model, y_tilda):
+return np.dot(lin.pinv(model), y_tilda)
+3
+
+
+
+ 
+1.8 make a score function using precision and recall
+In [8]: def score(true_positive_count, true_negative_count, false_positive_count, false_negativ
+precision = true_positive_count / (true_positive_count + false_positive_count)
+recall = true_positive_count / (false_negative_count + true_positive_count)
+return 2 * precision * recall / (precision + recall)
+1.9 get the parameter from train image set and test by teest image set
+In [9]: def main(feature_func, parameter_num):
+start_time = time.time()
+true_positive = np.empty((size_col * size_row, 1))
+true_negative = np.empty((size_col * size_row, 1))
+false_positive = np.empty((size_col * size_row, 1))
+false_negative = np.empty((size_col * size_row, 1))
+true_positive_count = 0
+true_negative_count = 0
+false_positive_count = 0
+false_negative_count = 0
+# np.dot(model, prameter) = y_tilda
+y_tilda = train_result()
+y_tilda is simalar to y_hat
+# lin.inv(np.dot(list_image_train, list_image_train.T))
+model = model_func(feature_func, parameter_num, num_train, list_image_train)
+parameter = parameter_func(model, y_tilda)
+test_model = model_func(feature_func, parameter_num, num_test, list_image_test)
+test_result = np.dot(test_model, parameter)
+result = np.empty((num_test,))
+for i in range(num_test):
+result[i] = hat(test_result[i])
+for i in range(num_test):
+if result[i] == 1:
+if list_label_test[i] == 0:
+# true positive
+true_positive[:, 0] += list_image_test[:, i]
+true_positive_count += 1
+else:
+# false positive
+false_positive[:, 0] += list_image_test[:, i]
+false_positive_count += 1
+else:
+# false negative
+if list_label_test[i] == 0:
+false_negative[:, 0] += list_image_test[:, i]
+false_negative_count += 1
+else:
+# true negative
+4
+
+
+
+ 
+true_negative[:, 0] += list_image_test[:, i]
+true_negative_count += 1
+try:
+true_positive /= true_positive_count
+true_negative /= true_negative_count
+false_positive /= false_positive_count
+false_negative /= false_negative_count
+except ZeroDivisionError:
+return -1
+plt.subplot(221)
+plt.title('True Positive')
+plt.imshow(true_positive.reshape((size_col, size_row)), cmap='Greys', interpolation
+#plt.show()
+plt.subplot(222)
+plt.title('True Negative')
+plt.imshow(true_negative.reshape((size_col, size_row)), cmap='Greys', interpolation
+#plt.show()
+plt.subplot(223)
+plt.title('False Negative')
+plt.imshow(false_negative.reshape((size_col, size_row)), cmap='Greys', interpolatio
+#plt.show()
+plt.subplot(224)
+plt.title('False Positive')
+plt.imshow(false_positive.reshape((size_col, size_row)), cmap='Greys', interpolatio
+#plt.show()
+plt.suptitle('--- Number of parameter = %d ---' % parameter_num)
+plt.subplots_adjust(left=0.2, wspace=0.8, top=0.8)
+plt.show()
+parameter_score = score(true_positive_count, true_negative_count, false_positive_co
+print('========================================')
+print('--- Number of parameter = %d ---' % parameter_num)
+print("--- %s seconds ---" % (time.time() - start_time))
+print("--- score: %f ---" %parameter_score)
+print('========================================')
+return parameter_score
+1.10 Repeat the process according to the number of parameters
+In [10]: scoreList = []
+for i in range(13):
+feature_func = feature(pow(2, i))
+scoreList.append(main(feature_func, pow(2, i)))
+5
+
