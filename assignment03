@@ -144,6 +144,9 @@ cluster_num = 4
 point_list = inputData()   # plot the random 300 points
 point_x = point_list[0]
 point_y = point_list[1]
+
+
+
     
     
     
