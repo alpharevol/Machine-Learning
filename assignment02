@@ -1,0 +1,11 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def myFunction(x):
+    f = np.log2(x) + pow(x,2)
+    return f
+    
+    def myDerivativeFunction(x):
+    DF = 1/(x*np.log(2)) + 2*x
+    return DF
