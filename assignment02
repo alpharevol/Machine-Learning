@@ -9,3 +9,15 @@ def myFunction(x):
     def myDerivativeFunction(x):
     DF = 1/(x*np.log(2)) + 2*x
     return DF
+    
+    
+    # use equation of tangent
+def taylorApproximation(x, x_point):
+    y_point = myFunction(x_point)
+    TA = myDerivativeFunction(x)*(x-x_point) + y_point
+    return TA
+
+x = np.arange(0.5, 21, 0.1)
+
+f = myFunction(x)
+DF = myDerivativeFunction(x)
