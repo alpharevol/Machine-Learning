@@ -98,6 +98,54 @@ def inputData():
     return new_center, new_energy, new_label
     
     
+    def plot(cluster_num, cluster, center):
+    color = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.spines['bottom'].set_position(('data', 0))
+    ax.spines['left'].set_position(('data', 0))
+
+    for i in range(cluster_num):
+        x = cluster[i][0]
+        y = cluster[i][1]
+        center_x = center[i][0]
+        center_y = center[i][1]
+        plt.scatter(x, y, color=color[i])
+        plt.scatter(center_x, center_y, color=color[i], label=('center_' + str(i+1)), s=180, marker='D')
+
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.show()
+    
+    
+    energy_list = []
+cluster_num = 3
+
+point_list = inputData()   # plot the random 300 points
+point_x = point_list[0]
+point_y = point_list[1]
+
+label_list = initalLabel(cluster_num)
+first_cluster, center = initCluster(cluster_num, label_list, point_x, point_y)
+
+energy_list.append(energy(first_cluster, center))
+
+
+for i in range(0, 20):
+    new_center, new_energy, new_label = cluster(center, point_x, point_y)
+    center = new_center
+    energy_list.append(new_energy)
+    
+    plt.scatter(range(len(energy_list)), energy_list, color='b')
+plt.show()
+
+energy_list = []
+cluster_num = 4
+
+point_list = inputData()   # plot the random 300 points
+point_x = point_list[0]
+point_y = point_list[1]
+    
+    
     
     
     
