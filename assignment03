@@ -38,3 +38,34 @@ def inputData():
     plot(cluster_num, first_cluster, center)
 
     return first_cluster, center
+    
+    def calculateCenter(cluster_num, clusterResult):
+    clusterCenter = []
+    for cluster in range(cluster_num):
+        x = clusterResult[cluster][0]
+        y = clusterResult[cluster][1]
+        try:
+            clusterCenter.append([(sum(x)/len(x)), (sum(y)/len(y))])
+        except ZeroDivisionError:
+            x = np.random.randint(-100,100,1)
+            y = np.random.randint(-100,100,1)
+            clusterCenter.append([x[0],y[0]])
+    return clusterCenter
+    
+    
+    
+    def distance(x_1, y_1, x_2, y_2):
+    return pow((x_1-x_2), 2) + pow((y_1-y_2), 2)
+    
+    
+    def energy(cluster, center):
+    energy_num = []
+    for i in range(len(cluster)):
+        for j in range(len(cluster[i][0])):
+            k = distance(cluster[i][0][j], cluster[i][1][j], center[i][0], center[i][1])
+            energy_num.append(k)
+    return sum(energy_num) / len(energy_num)
+    
+    
+    
+    
