@@ -39,3 +39,30 @@ x_point3 = 15         #(15,f(15))
 x_1 = np.arange(0.5, 10, 0.1)
 x_2 = np.arange(4, 15, 0.1)
 x_3 = np.arange(12, 20, 0.1)
+
+
+TA_1 = taylorApproximation(x_1, x_point1)
+plt.title('taylor approximation for first point')
+plt.plot(x, f, 'b', label='function')
+plt.plot(x, DF, 'r', label='derivative')
+plt.plot(x_1, TA_1, 'm', label='taylor')
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.show()
+
+
+TA_2 = taylorApproximation(x_2, x_point2)
+plt.title('taylor approximation for second point')
+plt.plot(x, f, 'b', label='function')
+plt.plot(x, DF, 'r', label='derivative')
+plt.plot(x_2, TA_2, 'm', label='taylor')
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.show()
+
+
+TA_3 = taylorApproximation(x_3, x_point3)
+plt.title('taylor approximation for third point')
+plt.plot(x, f, 'b', label='function')
+plt.plot(x, DF, 'r', label='derivative')
+plt.plot(x_3, TA_3, 'm', label='taylor')
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.show()
