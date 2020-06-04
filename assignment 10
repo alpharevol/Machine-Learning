@@ -77,4 +77,121 @@ for line in data_test:
     list_label_test[count] = label
     list_image_test[:, count] = im_vector
 
+
+
     count += 1
+
+
+def hat(test_num, tilde_result):                   # get max value index
+    result = np.empty(test_num, dtype=int)
+    for i in range(test_num):
+        result[i] = np.argmax(tilde_result[i, :])
+    return result
+    
+    
+    def tilde(digit):
+    train_label = np.empty(num_train, dtype=int)
+    for i in range(len(list_label_train)):
+        if list_label_train[i] == digit:
+            train_label[i] = 1
+        else:
+            train_label[i] = -1
+    return train_label
+    
+    
+    def feature(parameter_num):                       # random-vector
+    feature_func = np.empty((parameter_num, size_row*size_col))
+    for i in range(parameter_num):
+        feature_func[i, :] = np.random.normal(size=size_row*size_col)
+
+    return feature_func
+    
+    
+    
+    def train(parameter, parameter_num):
+    feature_func = feature(parameter_num)
+    for digit in range(10):
+        label = tilde(digit)
+        model = np.dot(feature_func, list_image_train)
+        parameter[:, digit] = np.dot(lin.pinv(model.T), label)
+
+    return feature_func
+    
+    
+    
+    def confusion(confusion_matrix):
+    frame = {'0': [int(num) for num in confusion_matrix[0, :]],
+             '1': [int(num) for num in confusion_matrix[1, :]],
+             '2': [int(num) for num in confusion_matrix[2, :]],
+             '3': [int(num) for num in confusion_matrix[3, :]],
+             '4': [int(num) for num in confusion_matrix[4, :]],
+             '5': [int(num) for num in confusion_matrix[5, :]],
+             '6': [int(num) for num in confusion_matrix[6, :]],
+             '7': [int(num) for num in confusion_matrix[7, :]],
+             '8': [int(num) for num in confusion_matrix[8, :]],
+             '9': [int(num) for num in confusion_matrix[9, :]]}
+
+    data_frame = DataFrame(frame)
+    print(data_frame.T)
+    
+    
+    def score(matrix):
+    f1_score = 0
+
+    for i in range(10):
+        true_positive = matrix[i][i]
+        false_positive = 0
+        false_negative = 0
+        for j in range(10):
+            if i != j:
+                false_negative += matrix[i][j]
+                false_positive += matrix[j][i]
+
+        precision = true_positive / (true_positive + false_positive)
+        recall = true_positive / (true_positive + false_negative)
+        f1_score += (2 * precision * recall / (precision + recall))
+
+    return f1_score/10
+    
+    
+    
+    def main(parameter_num, scoreList):
+    parameter = np.empty((parameter_num, 10))       # parameter for 0~9 label
+    feature_func = train(parameter, parameter_num)
+    result = test(parameter, parameter_num, feature_func)       # result of test data (10000 * 1)
+
+    data = np.empty(((size_row * size_col), 10))
+    data_count = np.zeros(10)
+
+    im_average = np.zeros((size_row * size_col, 10), dtype=float)
+    im_count = np.zeros(10, dtype=int)
+
+    confusion_matrix = np.zeros((10, 10))
+
+    for index in range(num_test):
+        i = int(list_label_test[index])
+        j = int(result[index])
+        confusion_matrix[i][j] += 1
+
+    for i in range(num_test):
+        im_average[:, result[i]] += list_image_test[:, i]
+        im_count[result[i]] += 1
+
+    for i in range(10):
+        im_average[:, i] /= im_count[i]
+
+        plt.subplot(2, 5, i + 1)
+        plt.suptitle('parameter num = %d' % parameter_num)
+        plt.title(i)
+        plt.imshow(im_average[:, i].reshape((size_row, size_col)), cmap='Greys', interpolation='None')
+
+        frame = plt.gca()
+        frame.axes.get_xaxis().set_visible(False)
+        frame.axes.get_yaxis().set_visible(False)
+
+    plt.show()
+    
+    confusion(confusion_matrix)
+    f1_score = score(confusion_matrix)
+    print('======= SCORE = %f =======' % f1_score)
+    scoreList.append(f1_score)
