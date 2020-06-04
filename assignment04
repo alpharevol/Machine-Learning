@@ -1,0 +1,52 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+file_data = "mnist_test.csv"
+handle_file = open(file_data, "r")
+data = handle_file.readlines()
+handle_file.close()
+
+size_row = 28  # height of the image
+size_col = 28  # width of the image
+
+num_image = len(data)
+count = 0  # count for the number of images
+
+
+#
+# normalize the values of the input data to be [0, 1]
+#
+def normalize(data):
+    data_normalized = (data - min(data)) / (max(data) - min(data))
+
+    return data_normalized
+
+
+#
+# example of distance function between two vectors x and y
+#
+def computeDistance(x, y):
+    d = (x - y) ** 2
+    s = np.sum(d)
+    r = np.sqrt(s)
+
+    return r
+    
+    
+    def initialiseLabel(list_image, cluster_label, cluster_num):
+    initialCenter = np.random.randint(0, 10000, cluster_num)
+    cluster_element = []
+    for i in range(num_image):
+        distance = []
+        for j in initialCenter:
+            x = list_image[:, i]
+            y = list_image[:, j]
+            distance.append(computeDistance(x, y))
+        cluster_label[i] = distance.index(min(distance))
+    cluster_label = np.array(cluster_label)
+
+    for i in range(cluster_num):
+        a = np.where(cluster_label == i)
+        cluster_element.append(a[0].tolist())
+    #print(cluster_element)
+    return initialCenter, np.array(cluster_element)
