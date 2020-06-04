@@ -195,3 +195,133 @@ def hat(test_num, tilde_result):                   # get max value index
     f1_score = score(confusion_matrix)
     print('======= SCORE = %f =======' % f1_score)
     scoreList.append(f1_score)
+    
+    
+    
+    
+    
+    
+    import matplotlib.pyplot as plt
+import numpy as np
+import numpy.linalg as lin
+import time
+from pandas import Series, DataFrame
+
+file_data_train = "mnist_train.csv"
+file_data_test = "mnist_test.csv"
+
+h_data_train = open(file_data_train, "r")
+h_data_test = open(file_data_test, "r")
+
+data_train = h_data_train.readlines()
+data_test = h_data_test.readlines()
+
+h_data_train.close()
+h_data_test.close()
+
+size_row = 28  # height of the image
+size_col = 28  # width of the image
+
+num_train = len(data_train)  # number of training images
+num_test = len(data_test)  # number of testing images
+
+
+
+#
+# normalize the values of the input data to be [0, 1]
+#
+def normalize(data):
+    data_normalized = (data - min(data)) / (max(data) - min(data))
+
+    return (data_normalized)
+
+
+#
+# example of distance function between two vectors x and y
+#
+def distance(x, y):
+    d = (x - y) ** 2
+    s = np.sum(d)
+    # r = np.sqrt(s)
+
+    return (s)
+
+
+#
+# make a matrix each column of which represents an images in a vector form
+#
+list_image_train = np.empty((size_row * size_col, num_train), dtype=float)
+list_label_train = np.empty(num_train, dtype=int)
+
+list_image_test = np.empty((size_row * size_col, num_test), dtype=float)
+list_label_test = np.empty(num_test, dtype=int)
+
+count = 0
+
+for line in data_train:
+    line_data = line.split(',')
+    label = line_data[0]
+    im_vector = np.asfarray(line_data[1:])
+    im_vector = normalize(im_vector)
+
+    list_label_train[count] = label
+    list_image_train[:, count] = im_vector          # limst_image_train의 column 에 train image들의 픽셀들을 1column 형식으로 input
+
+    count += 1
+
+count = 0
+
+for line in data_test:
+    line_data = line.split(',')
+    label = line_data[0]
+    im_vector = np.asfarray(line_data[1:])
+    im_vector = normalize(im_vector)
+
+    list_label_test[count] = label
+    list_image_test[:, count] = im_vector
+
+    count += 1
+
+
+def hat(test_num, tilde_result):                   # get max value index
+    result = np.empty(test_num, dtype=int)
+    for i in range(test_num):
+        result[i] = np.argmax(tilde_result[i, :])
+    return result
+
+
+def tilde(digit):
+    train_label = np.empty(num_train, dtype=int)
+    for i in range(len(list_label_train)):
+        if list_label_train[i] == digit:
+            train_label[i] = 1
+        else:
+            train_label[i] = -1
+    return train_label
+
+
+def feature(parameter_num):                       # random-vector
+    feature_func = np.empty((parameter_num, size_row*size_col))
+    for i in range(parameter_num):
+        feature_func[i, :] = np.random.normal(size=size_row*size_col)
+
+    return feature_func
+
+
+def train(parameter, parameter_num):
+    feature_func = feature(parameter_num)
+    for digit in range(10):
+        label = tilde(digit)
+        model = np.dot(feature_func, list_image_train)
+        parameter[:, digit] = np.dot(lin.pinv(model.T), label)
+
+    return feature_func
+
+
+def test(parameter, parameter_num, feature_func):
+    test_tilde = np.empty((num_test, 10))
+    model = np.dot(feature_func, list_image_test)
+    for digit in range(10):
+        test_tilde[:, digit] = np.dot(model.T, parameter[:, digit])
+    result = hat(num_test, test_tilde)
+    return result
