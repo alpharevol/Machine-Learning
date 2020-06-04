@@ -21,3 +21,21 @@ x = np.arange(0.5, 21, 0.1)
 
 f = myFunction(x)
 DF = myDerivativeFunction(x)
+
+
+plt.title('graph')
+plt.plot(x, f, 'b', label='function')
+plt.plot(x, DF, 'r', label='derivative')
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.show()
+
+
+x_point1 = 1          #(1,f(1))
+x_point2 = 8          #(8,f(8))
+x_point3 = 15         #(15,f(15))
+
+
+# plot the part of taylor approximation graph
+x_1 = np.arange(0.5, 10, 0.1)
+x_2 = np.arange(4, 15, 0.1)
+x_3 = np.arange(12, 20, 0.1)
