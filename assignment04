@@ -50,3 +50,55 @@ def computeDistance(x, y):
         cluster_element.append(a[0].tolist())
     #print(cluster_element)
     return initialCenter, np.array(cluster_element)
+    
+    def clustering(list_image, cluster_label, cluster_element, cluster_num):
+    center = np.empty((size_col*size_row, cluster_num))
+    count = 0
+
+    for i in range(cluster_num):
+        total = np.zeros(((size_row * size_col), 1))
+
+        for j in cluster_element[i]:
+            total[:] += list_image[:, j:j+1]
+
+        center[:, count:count+1] = total / len(cluster_element[i])
+        count += 1
+
+    for i in range(len(list_image[0])):
+        distance = []
+        for j in range(cluster_num):
+            x = list_image[:, i]
+            y = center[:, j]
+            distance.append(computeDistance(x, y))
+        cluster_label[i] = distance.index(min(distance))
+    cluster_label = np.array(cluster_label)
+
+    cluster_element = []
+    for i in range(cluster_num):
+        a = np.where(cluster_label == i)
+        cluster_element.append(a[0].tolist())
+    #print(cluster_element)
+    return center, np.array(cluster_element)
+    
+    
+    def showClusterResult(list_image, cluster_label,cluster_num):   # 단순 cluster 후 cluster들의 결과 확인
+    f1 = plt.figure(1)
+
+    im_average = np.zeros((size_row * size_col, 10), dtype=float)
+    im_count = np.zeros(10, dtype=int)
+
+    for i in range(num_image):
+        im_average[:, cluster_label[i]] += list_image[:, i]
+        im_count[cluster_label[i]] += 1
+
+    for i in range(cluster_num):
+        im_average[:, i] /= im_count[i]
+
+        plt.subplot(2, 5, i + 1)
+        plt.imshow(im_average[:, i].reshape((size_row, size_col)), cmap='Greys', interpolation='None')
+
+        frame = plt.gca()
+        frame.axes.get_xaxis().set_visible(False)
+        frame.axes.get_yaxis().set_visible(False)
+
+    plt.show()
