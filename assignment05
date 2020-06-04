@@ -1,0 +1,16 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import signal
+from skimage import io, color
+
+
+file_image = 'cau.jpg'
+
+im_color = io.imread(file_image)
+im_gray = color.rgb2gray(im_color)
+
+def xConvolution(image):
+    x_kernel = np.array([[1,-1]])
+    image = signal.convolve2d(image, x_kernel, boundary='symm', mode='same')
+
+    return image
