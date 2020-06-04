@@ -66,6 +66,38 @@ def inputData():
             energy_num.append(k)
     return sum(energy_num) / len(energy_num)
     
+    def cluster(center, point_x, point_y):
+    new_label = []
+    new_cluster = []
+
+    for point in range(len(point_x)):
+        distanceToCenter = []
+        for i in range(len(center)):
+            center_x = center[i][0]
+            center_y = center[i][1]
+            new_distance = distance(point_x[point], point_y[point], center_x, center_y)
+            distanceToCenter.append(new_distance)
+        distanceMin = min(distanceToCenter)
+        new_cluster_label = distanceToCenter.index(distanceMin)
+        new_label.append(new_cluster_label+1)
+
+    for num in range(1, len(center) + 1):
+        cluster_x = []
+        cluster_y = []
+        for label_index in range(len(new_label)):
+            if num == new_label[label_index]:
+                cluster_x.append(point_x[label_index])
+                cluster_y.append(point_y[label_index])
+        new_cluster.append([cluster_x, cluster_y])
+
+    new_center = calculateCenter(len(center), new_cluster)
+    plot(len(center), new_cluster, new_center)
+
+    new_energy = energy(new_cluster, new_center)
+
+    return new_center, new_energy, new_label
+    
+    
     
     
     
