@@ -226,3 +226,202 @@ ax2.tick_params('y', colors='r')
 
 fig.tight_layout()
 plt.show()
+
+
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+file_data = "mnist_test.csv"
+handle_file = open(file_data, "r")
+data = handle_file.readlines()
+handle_file.close()
+
+size_row = 28  # height of the image
+size_col = 28  # width of the image
+
+num_image = len(data)
+count = 0  # count for the number of images
+
+
+#
+# normalize the values of the input data to be [0, 1]
+#
+def normalize(data):
+    data_normalized = (data - min(data)) / (max(data) - min(data))
+
+    return data_normalized
+
+
+#
+# example of distance function between two vectors x and y
+#
+def computeDistance(x, y):
+    d = (x - y) ** 2
+    s = np.sum(d)
+    r = np.sqrt(s)
+
+    return r
+
+
+#
+# cluster 개수만큼 initial clustering 결과 출력
+#
+def initialiseLabel(list_image, cluster_label, cluster_num):
+    initialCenter = np.random.randint(0, 10000, cluster_num)
+    cluster_element = []
+    for i in range(num_image):
+        distance = []
+        for j in initialCenter:
+            x = list_image[:, i]
+            y = list_image[:, j]
+            distance.append(computeDistance(x, y))
+        cluster_label[i] = distance.index(min(distance))
+    cluster_label = np.array(cluster_label)
+
+    for i in range(cluster_num):
+        a = np.where(cluster_label == i)
+        cluster_element.append(a[0].tolist())
+    #print(cluster_element)
+    return initialCenter, np.array(cluster_element)
+
+
+def clustering(list_image, cluster_label, cluster_element, cluster_num):
+    center = np.empty((size_col*size_row, cluster_num))
+    count = 0
+
+    for i in range(cluster_num):
+        total = np.zeros(((size_row * size_col), 1))
+
+        for j in cluster_element[i]:
+            total[:] += list_image[:, j:j+1]
+
+        center[:, count:count+1] = total / len(cluster_element[i])
+        count += 1
+
+    for i in range(len(list_image[0])):
+        distance = []
+        for j in range(cluster_num):
+            x = list_image[:, i]
+            y = center[:, j]
+            distance.append(computeDistance(x, y))
+        cluster_label[i] = distance.index(min(distance))
+    cluster_label = np.array(cluster_label)
+
+    cluster_element = []
+    for i in range(cluster_num):
+        a = np.where(cluster_label == i)
+        cluster_element.append(a[0].tolist())
+    #print(cluster_element)
+    return center, np.array(cluster_element)
+
+
+
+def showClusterResult(list_image, cluster_label,cluster_num):   # 단순 cluster 후 cluster들의 결과 확인
+    f1 = plt.figure(1)
+
+    im_average = np.zeros((size_row * size_col, 10), dtype=float)
+    im_count = np.zeros(10, dtype=int)
+
+    for i in range(num_image):
+        im_average[:, cluster_label[i]] += list_image[:, i]
+        im_count[cluster_label[i]] += 1
+
+    for i in range(cluster_num):
+        im_average[:, i] /= im_count[i]
+
+        plt.subplot(2, 5, i + 1)
+        plt.imshow(im_average[:, i].reshape((size_row, size_col)), cmap='Greys', interpolation='None')
+
+        frame = plt.gca()
+        frame.axes.get_xaxis().set_visible(False)
+        frame.axes.get_yaxis().set_visible(False)
+
+    plt.show()
+
+
+def computeEnergy(list_image, cluster_element, center, cluster_num):
+    total_sum = 0
+    for i in range(cluster_num):
+        cluster_sum = 0
+        for j in range(len(cluster_element[i])):
+            cen = center[i]
+            try:
+                x = list_image[:, cen]
+            except:
+                x = center[:,i]
+            y = list_image[:, j]
+            #print(computeDistance(x,y))
+            cluster_sum += computeDistance(x, y)
+        total_sum += cluster_sum
+    return total_sum / num_image
+
+
+def computeAccuracy(list_label, cluster_element, cluster_num):
+    total = 0
+    for i in range(len(cluster_element)):
+        in_label = np.empty(len(cluster_element[i]), dtype=int)
+        for j in range(len(cluster_element[i])):
+            in_label[j] = list_label[cluster_element[i][j]]
+        a = np.bincount(in_label)
+        total += (a.max() / a.sum())
+    return total / cluster_num
+
+#
+# make a matrix each column of which represents an images in a vector form
+#
+list_image = np.empty((size_row * size_col, num_image), dtype=float)  # 784 * 10000 행렬
+list_label = np.empty(num_image, dtype=int)
+energy, accuracy = [], []
+
+for line in data:
+    line_data = line.split(',')
+    label = line_data[0]
+    im_vector = np.asfarray(line_data[1:])  # 1 * 784 행렬
+    im_vector = normalize(im_vector)
+
+    list_label[count] = label
+    list_image[:, count] = im_vector  # list_image 를 column순으로 데이터 채우기
+    count += 1
+
+cluster_label = np.empty(num_image, dtype=int)                  # list_image column순서대로 어느 cluster에 속할지~
+                                                                # list_element [[],[],[],[],[]]
+
+cluster_num = 10
+initial_center, initial_element = initialiseLabel(list_image, cluster_label, cluster_num)               #initial clustering 한 결과의 label
+showClusterResult(list_image, cluster_label, cluster_num)
+energy.append(computeEnergy(list_image, initial_element, initial_center, cluster_num))
+accuracy.append(computeAccuracy(list_label,initial_element, cluster_num))
+
+cluster_element = initial_element
+
+show_count = 1
+for iteration in range(1,30):
+    center, cluster_element = clustering(list_image,cluster_label,cluster_element,cluster_num)
+    if show_count % 4 == 0:
+        showClusterResult(list_image, cluster_label, cluster_num)
+    show_count += 1
+    energy.append(computeEnergy(list_image, cluster_element, center, cluster_num))
+    accuracy.append(computeAccuracy(list_label,cluster_element, cluster_num))
+
+fig, ax1 = plt.subplots()
+x_axis = np.arange(1,31,1)
+s1 = np.array(energy)
+ax1.plot(x_axis, s1, 'b-')
+ax1.set_xlabel('Iteration')
+ax1.set_ylabel('energy', color='b')
+ax1.tick_params('y', colors='b')
+
+ax2 = ax1.twinx()
+s2 = np.array(accuracy)
+ax2.plot(x_axis, s2, 'r-')
+ax2.set_ylabel('accuracy', color='r')
+ax2.tick_params('y', colors='r')
+
+fig.tight_layout()
+plt.show()
+
+
+
