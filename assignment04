@@ -155,3 +155,49 @@ initial_center, initial_element = initialiseLabel(list_image, cluster_label, clu
 showClusterResult(list_image, cluster_label, cluster_num)
 
 
+energy.append(computeEnergy(list_image, initial_element, initial_center, cluster_num))
+accuracy.append(computeAccuracy(list_label,initial_element, cluster_num))
+
+
+cluster_element = initial_element
+
+show_count = 1
+for iteration in range(1,30):
+    center, cluster_element = clustering(list_image,cluster_label,cluster_element,cluster_num)
+    if show_count % 4 == 0:
+        showClusterResult(list_image, cluster_label, cluster_num)
+    show_count += 1
+    energy.append(computeEnergy(list_image, cluster_element, center, cluster_num))
+    accuracy.append(computeAccuracy(list_label,cluster_element, cluster_num))
+    
+    
+    fig, ax1 = plt.subplots()
+x_axis = np.arange(1,31,1)
+s1 = np.array(energy)
+ax1.plot(x_axis, s1, 'b-')
+ax1.set_xlabel('Iteration')
+ax1.set_ylabel('energy', color='b')
+ax1.tick_params('y', colors='b')
+
+ax2 = ax1.twinx()
+s2 = np.array(accuracy)
+ax2.plot(x_axis, s2, 'r-')
+ax2.set_ylabel('accuracy', color='r')
+ax2.tick_params('y', colors='r')
+
+fig.tight_layout()
+plt.show()
+
+
+cluster_num = 8
+
+
+energy, accuracy = [], []
+initial_center, initial_element = initialiseLabel(list_image, cluster_label, cluster_num)
+showClusterResult(list_image, cluster_label, cluster_num)
+
+energy.append(computeEnergy(list_image, initial_element, initial_center, cluster_num))
+accuracy.append(computeAccuracy(list_label,initial_element, cluster_num))
+
+
+
