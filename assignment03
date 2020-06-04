@@ -146,7 +146,38 @@ point_x = point_list[0]
 point_y = point_list[1]
 
 
+label_list = initalLabel(cluster_num)
+first_cluster, center = initCluster(cluster_num, label_list, point_x, point_y)
 
+energy_list.append(energy(first_cluster, center))
+
+for i in range(0, 30):
+    new_center, new_energy, new_label = cluster(center, point_x, point_y)
+    center = new_center
+    energy_list.append(new_energy)
+    
+    plt.scatter(range(len(energy_list)), energy_list, color='b')
+plt.show()
+
+energy_list = []
+cluster_num = 5
+
+point_list = inputData()   # plot the random 300 points
+point_x = point_list[0]
+point_y = point_list[1]
+
+label_list = initalLabel(cluster_num)
+first_cluster, center = initCluster(cluster_num, label_list, point_x, point_y)
+
+energy_list.append(energy(first_cluster, center))
+
+for i in range(0, 30):
+    new_center, new_energy, new_label = cluster(center, point_x, point_y)
+    center = new_center
+    energy_list.append(new_energy)
+    
+    plt.scatter(range(len(energy_list)), energy_list, color='b')
+plt.show()
     
     
     
