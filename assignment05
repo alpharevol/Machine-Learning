@@ -41,4 +41,40 @@ def yConvolution(image):
 
     return own_image
     
+    plt.imshow(im_color)
+plt.axis('off')
+plt.show()
+
+plt.imshow(im_gray, cmap='gray')
+plt.axis('off')
+plt.show()
+
+x_convImage = xConvolution(im_gray)
+plt.imshow(x_convImage, cmap='gray')
+plt.axis('off')
+plt.show()
+
+print(x_convImage)
+
+
+[[ 0.          0.          0.         ...  0.          0.
+   0.        ]
+ [ 0.          0.          0.         ...  0.          0.
+   0.        ]
+ [ 0.          0.          0.         ...  0.          0.
+   0.        ]
+ ...
+ [ 0.         -0.00784314 -0.01176471 ...  0.00392157  0.00392157
+   0.        ]
+ [ 0.         -0.00392157 -0.00784314 ...  0.00784314  0.01176471
+   0.00392157]
+ [ 0.         -0.00392157 -0.00784314 ...  0.00784314  0.01176471
+   0.00392157]]
+   
+   y_convImage = yConvolution(im_gray)
+plt.imshow(y_convImage, cmap='gray')
+plt.axis('off')
+plt.show()
+
+print(y_convImage)
     
