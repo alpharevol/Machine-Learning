@@ -78,3 +78,47 @@ plt.show()
 
 print(y_convImage)
     
+
+absolute_gradient = absoluteGradient(x_convImage, y_convImage)
+plt.imshow(absolute_gradient, cmap='gray')
+plt.axis('off')
+plt.show()
+
+print(absolute_gradient)
+
+
+[[0.         0.         0.         ... 0.         0.         0.        ]
+ [0.         0.         0.         ... 0.         0.         0.        ]
+ [0.00392157 0.00392157 0.00392157 ... 0.         0.         0.        ]
+ ...
+ [0.01568627 0.01413942 0.01240109 ... 0.0316167  0.02772968 0.03137255]
+ [0.01960784 0.01616904 0.01413942 ... 0.01109187 0.01960784 0.01999615]
+ [0.         0.00392157 0.00784314 ... 0.00784314 0.01176471 0.00392157]]
+ 
+ image_direction = direction(absolute_gradient)
+plt.imshow(image_direction, cmap='gray')
+plt.axis('off')
+plt.show()
+
+print(image_direction)
+
+
+[[0.         0.         0.         ... 0.         0.         0.        ]
+ [0.         0.         0.         ... 0.         0.         0.        ]
+ [0.00392155 0.00392155 0.00392155 ... 0.         0.         0.        ]
+ ...
+ [0.01568499 0.01413847 0.01240045 ... 0.03160617 0.02772257 0.03136226]
+ [0.01960533 0.01616763 0.01413847 ... 0.01109142 0.01960533 0.01999349]
+ [0.         0.00392155 0.00784298 ... 0.00784298 0.01176416 0.00392155]]
+ 
+ 
+ smooth_image = smoothing(im_gray)
+plt.imshow(smooth_image, cmap='gray')
+plt.axis('off')
+plt.show()
+
+
+own_image = ownKernel(im_gray)
+plt.imshow(own_image, cmap='gray')
+plt.axis('off')
+plt.show()
