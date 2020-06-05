@@ -5,15 +5,21 @@ import matplotlib.pyplot as plt
 file_data_train = "mnist_train.csv"
 file_data_test = "mnist_test.csv"
 
+
+
 h_data_train = open(file_data_train, "r")
 h_data_test = open(file_data_test, "r")
 
 data_train = h_data_train.readlines()
 data_test = h_data_test.readlines()
 
+
+
 h_data_train.close()
 h_data_test.close()
-
+ 
+ 
+ 
 size_row = 28  # height of the image
 size_col = 28  # width of the image
 
@@ -38,7 +44,7 @@ def distance(x, y):
     # r = np.sqrt(s)
 
     return (s)
-
+  
 
 #
 # make a matrix each column of which represents an images in a vector form
@@ -122,6 +128,7 @@ def feature():                       # e-vector
     return origin_result
     
     
+    
     y_tilda = train_result()
 model = model_func(num_train, list_image_train)
 parameter = parameter_func(model, y_tilda)
@@ -173,6 +180,7 @@ plt.show()
 plt.title('Falese Negative')
 plt.imshow(false_negative.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
 plt.show()
+
 
 
 plt.title('False Positive')
