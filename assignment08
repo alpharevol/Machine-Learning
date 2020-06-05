@@ -1,9 +1,13 @@
 import numpy as np
 import numpy.linalg as lin
+
 import matplotlib.pyplot as plt
 
 file_data_train = "mnist_train.csv"
 file_data_test = "mnist_test.csv"
+
+
+
 
 
 
@@ -15,8 +19,12 @@ data_test = h_data_test.readlines()
 
 
 
+
+
 h_data_train.close()
 h_data_test.close()
+ 
+ 
  
  
  
@@ -69,6 +77,8 @@ for line in data_train:
     count += 1
 
 count = 0
+
+
 
 for line in data_test:
     line_data = line.split(',')
