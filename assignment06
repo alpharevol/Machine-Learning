@@ -1,0 +1,45 @@
+import numpy as np
+import numpy.linalg as lin
+import matplotlib.pyplot as plt
+
+
+num = 201
+std = 20
+a = 2
+b = 10
+
+n = np.random.rand(num)
+nn = n - np.mean(n)
+x = np.linspace(-100,100,num)
+y1 = a * x + nn * std + b
+y2 = a * x + b
+
+plt.plot(x, y1, 'b.')
+plt.show()
+plt.plot(x, y2, 'r.')
+plt.show()
+plt.plot(x, y1, 'b.', x, y2, 'r.')
+plt.show()
+
+model = np.ones((num, 2))
+for i in range(num):
+    model[i][0] = x[i]
+
+parameter = np.dot(np.dot(lin.inv(np.dot(model.T, model)), model.T), y1)
+
+print(np.shape(parameter))
+print(parameter[0], parameter[1])
+
+line = x * parameter[0] + parameter[1]
+
+plt.plot(x, line, 'c', x, y1, 'b.')
+plt.show()
+
+#parameter = np.array([ , ])
+#residual = model * parameter.T
+
+
+# x  : x-coordinate data
+# y1 : (noisy) y-coordinate data
+# y2 : (clean) y-coordinate data
+# y = f(x) = a * x + b
