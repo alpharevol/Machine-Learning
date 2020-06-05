@@ -91,3 +91,72 @@ def feature():                       # e-vector
         e_vector[i][i] = 1
 
     return e_vector
+    
+    
+    def model_func(num, image):
+    feature_func = feature()
+    model = np.empty((num, size_row*size_col), dtype=float)
+    for i in range(num):
+        model[i, :] = np.dot(feature_func, image[:, i])
+
+    return model
+    
+    def hat(result):                   # sign function
+    if result >= 0:
+        return 1
+    else:
+        return -1
+        
+        def parameter_func(model, y_tilda):
+    return np.dot(lin.pinv(model), y_tilda)
+    
+    
+    def train_result():
+    origin_result = np.empty((num_train, 1))
+    for i in range(num_train):
+        if list_label_train[i] == 0:
+            origin_result[i] = 1
+        else:
+            origin_result[i] = -1
+
+    return origin_result
+    
+    
+    y_tilda = train_result()
+model = model_func(num_train, list_image_train)
+parameter = parameter_func(model, y_tilda)
+
+
+plt.title('Parameter Image')
+plt.imshow(parameter.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
+plt.show()
+
+
+test_model = model_func(num_test, list_image_test)
+
+test_result = np.dot(test_model, parameter)
+
+result = np.empty((num_test,))
+for i in range(num_test):
+    result[i] = hat(test_result[i])
+    
+    for i in range(num_test):
+    if result[i] == 1:
+        if list_label_test[i] == 0:     # true positive
+            true_positive[:, 0] += list_image_test[:, i]
+            true_positive_count += 1
+        else:                           # false positive
+            false_positive[:, 0] += list_image_test[:, i]
+            false_positive_count += 1
+    else:                               # false negative
+        if list_label_test[i] == 0:
+            false_negative[:, 0] += list_image_test[:, i]
+            false_negative_count += 1
+        else:                           # true negative
+            true_negative[:, 0] += list_image_test[:, i]
+            true_negative_count += 1
+
+true_positive /= true_positive_count
+true_negative /= true_positive_count
+false_positive /= false_positive_count
+false_negative /= false_negative_count
