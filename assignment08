@@ -160,3 +160,22 @@ true_positive /= true_positive_count
 true_negative /= true_positive_count
 false_positive /= false_positive_count
 false_negative /= false_negative_count
+
+
+plt.title('True Positive')
+plt.imshow(true_positive.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
+plt.show()
+
+plt.title('True Negative')
+plt.imshow(true_negative.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
+plt.show()
+
+plt.title('Falese Negative')
+plt.imshow(false_negative.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
+plt.show()
+
+
+plt.title('False Positive')
+plt.imshow(false_positive.reshape((size_col, size_row)), cmap='Greys', interpolation='None')
+plt.show()
+
