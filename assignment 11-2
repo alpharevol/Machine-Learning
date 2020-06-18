@@ -1,0 +1,123 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy.linalg import inv
+
+num = 1001
+std = 5
+
+
+# x  : x-coordinate data
+# y1 : (clean) y-coordinate data
+# y2 : (noisy) y-coordinate data
+
+def fun(x):
+    # f = np.sin(x) * (1 / (1 + np.exp(-x)))
+    f = np.abs(x) * np.sin(x)
+
+    return f
+
+
+def modelGenerate(x, parameter_num):
+    model = np.empty((len(x), parameter_num))
+    for i in range(len(x)):
+        parameter_row = np.empty(parameter_num)
+        for j in range(parameter_num):
+            parameter_row[j] = np.power(x[i], j)
+
+        model[i, :] = parameter_row[:]
+
+    return model
+
+
+def A(model, parameter_num, lamb):
+    #i_matrix = np.identity(parameter_num) * np.sqrt(lamb)
+    i_matrix = np.identity(parameter_num) * np.sqrt(lamb)
+
+    return np.concatenate((model, i_matrix), axis=0)
+
+
+def B(y, parameter_num):
+    zero_matrix = np.zeros([parameter_num])
+
+    return np.concatenate((y, zero_matrix), axis=0)
+
+
+def leastSquare(left, right):
+    return np.dot(np.dot(inv(np.dot(left.T, left)), left.T), right)
+
+
+def energy(a, b, parameter, lamb):
+    return np.sqrt(np.sum(np.power((a - b), 2))) + np.sqrt(np.sum(np.power(parameter, 2))) * lamb
+
+
+
+n = np.random.rand(num)
+nn = n - np.mean(n)
+x = np.linspace(-10, 10, num)
+y1 = fun(x)  # clean points
+y2 = y1 + nn * std  # noisy points
+
+p1 = plt.subplot(2,1,1)
+p1.set_title('clean points')
+plt.plot(x, y1, 'b.')
+plt.axis('off')
+p2 = plt.subplot(2,1,2)
+plt.plot(x, y2, 'k.')
+plt.axis('off')
+plt.show()
+
+
+for parameter_num in range(6, 16):
+    model = modelGenerate(x, parameter_num)
+    noLambdaParameter = leastSquare(model, y2)
+    y3 = np.dot(model, noLambdaParameter)
+
+    plt.title('parameter num = %d' % parameter_num)
+    plt.plot(x, y3, 'b.')
+    plt.axis('off')
+    plt.show()
+
+
+def result(parameter_num):
+    model = modelGenerate(x, parameter_num)
+    noLambdaParameter = leastSquare(model, y2)
+    y3 = np.dot(model, noLambdaParameter)
+
+    energyList = []
+    energyListX = []
+
+    for j in range(20):
+        lamb = pow(2, j - 5)
+        left = A(model, parameter_num, lamb)
+        right = B(y2, parameter_num)
+        withLambdaParameter = leastSquare(left, right)
+        y4 = np.dot(model, withLambdaParameter)
+        energyList.append(energy(y4, y2, withLambdaParameter, lamb))
+        energyListX.append(lamb)
+
+        p3 = plt.subplot(3, 1, 1)
+        p3.set_title('parameter num = %d  - WITHOUT LAMBDA-' % parameter_num)
+        plt.plot(x, y3)
+        plt.axis('off')
+
+        p4 = plt.subplot(3, 1, 2)
+        p4.set_title('lambda = pow (2, %d)  - WITH LAMBDA-' % (j-5))
+        plt.plot(x, y4)
+        plt.axis('off')
+
+        p5 = plt.subplot(3, 1, 3)
+        p5.set_title('parameter num = %d, lambda = pow(2, %d)' % (parameter_num, j - 5))
+        plt.plot(x, y3, 'r.', x, y4, 'k.')
+        plt.axis('off')
+        plt.show()
+
+    return energyList, energyListX
+
+
+# 6 ~ 16
+## Plot the data with 8 parameter and changing lambda       ($2^{-5}$, $2^{-4}$, $2^{-3}$, $\cdots$, $2^{12}$, $2^{13}$, $2^{14}$)
+energyList, energyListX = result(6)
+### Plot the energy changed by lambda
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
+
