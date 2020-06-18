@@ -256,14 +256,20 @@ energyList, energyListX = result(9)
 
 energyList, energyListX = result(9)
 
-
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
     
-    
+energyList, energyListX = result(10)
 
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
 
+energyList, energyListX = result(11)
 
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
 
-
+energyList, energyListX = result(12)
 
 
 
