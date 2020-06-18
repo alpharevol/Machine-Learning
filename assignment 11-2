@@ -271,7 +271,23 @@ plt.show()
 
 energyList, energyListX = result(12)
 
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
 
+energyList, energyListX = result(13)
+
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
+
+energyList, energyListX = result(14)
+
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
+
+energyList, energyListX = result(15)
+
+plt.plot(energyListX, energyList, 'r.')
+plt.show()
 
 
 
